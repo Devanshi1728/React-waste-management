@@ -11,7 +11,9 @@ import Table from "Admin/components/Table/Table.js";
 import Card from "Admin/components/Card/Card.js";
 import CardHeader from "Admin/components/Card/CardHeader.js";
 import CardBody from "Admin/components/Card/CardBody.js";
+import EditScrap from "./EditScrap";
 import axios from "axios";
+import { useHistory } from "react-router";
 
 const URL = 'http://127.0.0.1:5000/delete'
 const styles = {
@@ -46,11 +48,27 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function VendorList() {
 
+export default function VendorList(props) {
+    var history = useHistory();
+    const [id,setId] = React.useState(0)
     const t = JSON.parse(localStorage.getItem("token"));
 
     const classes = useStyles();
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = (id) => {
+        console.log('click')
+        setId(id)
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+    
+
     const [items, setItems] = useState(null)
     useEffect(() => {
         getData()
@@ -62,12 +80,6 @@ export default function VendorList() {
                 "Authorization": "Bearer " + `${t.token}`
             }})
         setItems(response.data)
-        // console.log("data.username = ",response.data.Users.Username)
-        // axios.get("http://127.0.0.1:5000/userlist")
-        //     .then(response => {
-        //         setVendors(response.data)
-        //         //console.log(response.data.TotalUsers)
-        //         //console.log(response.data.Users)
     }
     const renderHeader = () => {
         let headerElement = ['id', 'item_name', 'item_price', 'Delete', 'Modify']
@@ -95,29 +107,10 @@ export default function VendorList() {
         })
     }
 
-    const EditData = (id) => {
-        console.log("Edit called")
-        console.log(id)
-        // axios.put(`http://127.0.0.1:5000/item`,
-        //     {
-        //         headers:{ 
-        //             'Authorization': "Bearer " + `${t.token}` },
-        //             data: { id: id }
-        //     }).then(res => {
-        //     //const del = vendors.Users.filter(Users => id !== Users.UserId)
-        //     console.log("Response = ", res)
-
-        //     setItems(res)
-        //     alert("Data Updated Successfully")
-        // }).catch(error => {
-        //     console.log("id", id)
-        //     //console.log("Users.UserId ", Userid)
-        //     console.log("Error : ", error)
-        // })
-    }
-
     const renderBody = (props) => {
-        console.log(items)
+        //console.log(items)
+        //item.map(row => console.log(row.name))
+        
         return items ? items.Items.map(({ Item_id, Item_name, Item_price }) => {
             return [Item_id, Item_name, Item_price,
                 <Button
@@ -134,7 +127,7 @@ export default function VendorList() {
                     size="small"
                     className={classes.button}
                     startIcon={<EditIcon />}
-                    onClick={() => EditData(Item_id)}
+                    onClick={() => handleClickOpen(Item_id)}
                 >Edit</Button>
             ]
             //<Button onClick={() => removeData(Username)}>Delete</Button>]
@@ -155,6 +148,7 @@ export default function VendorList() {
         // </>
         // );
         <GridContainer>
+            < EditScrap data={id} open={open} handleClose={handleClose}/>
             <GridItem xs={12} sm={12} md={12}>
                 <Card>
                     <CardHeader color="primary">

@@ -126,7 +126,7 @@ export default function LoginPage(props) {
                   <CardHeader color="primary" className={classes.cardHeader}>
                     <h4>Login</h4>
                   </CardHeader>
-                  <p className={classes.divider}>Or Be Classical</p> 
+                  {/* <p className={classes.divider}>Or Be Classical</p>  */}
                   <CardBody>
                     <CustomInput
                       labelText="Username..."

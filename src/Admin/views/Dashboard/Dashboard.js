@@ -240,7 +240,7 @@ export default function Dashboard() {
         <GridItem xs={12} sm={12} md={6}>
           <Card>
             <CardHeader color="warning">
-              <h4 className={classes.cardTitleWhite}>Employees Stats</h4>
+              <h4 className={classes.cardTitleWhite}>Order Stats</h4>
               <p className={classes.cardCategoryWhite}>
                 {/* New employees on 15th September, 2016 */}
               </p>
@@ -248,12 +248,10 @@ export default function Dashboard() {
             <CardBody>
               <Table
                 tableHeaderColor="warning"
-                tableHead={["ID", "Name", "Salary", "Country"]}
+                tableHead={["OrderID", "Name", "Date", "City", "Status"]}
                 tableData={[
-                  ["1", "Dakota Rice", "$36,738", "Niger"],
-                  ["2", "Minerva Hooper", "$23,789", "Curaçao"],
-                  ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
-                  ["4", "Philip Chaney", "$38,735", "Korea, South"]
+                  ["111", "Dakota Rice","10-03-2021","Junagadh", "Pending..."],
+                 
                 ]}
               />
             </CardBody>

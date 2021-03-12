@@ -65,7 +65,7 @@ export default function VendorList() {
         //         //console.log(response.data.Users)
     }
     const renderHeader = () => {
-        let headerElement = ['id', 'username', 'Role', 'city', 'phone', 'Delete']
+        let headerElement = ['username', 'Role', 'city', 'phone', 'Delete']
         return headerElement.map((key, index) => {
             return key.toUpperCase()
         })
@@ -110,8 +110,8 @@ export default function VendorList() {
 
     const renderBody = (props) => {
         console.log(vendors)
-        return vendors && vendors.Users ? vendors.Users.map(({ UserId, Username, Role, City, Phone }) => {
-            return [UserId, Username, Role, City, Phone,
+        return vendors && vendors.Users ? vendors.Users.map(({ Username, Role, City, Phone }) => {
+            return [Username, Role, City, Phone,
                 <Button
                     variant="contained"
                     color="secondary"

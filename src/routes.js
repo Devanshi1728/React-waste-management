@@ -1,6 +1,7 @@
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
+import Out from "@material-ui/icons/ExitToAppOutlined"
 // import LibraryBooks from "@material-ui/icons/LibraryBooks";
 // import BubbleChart from "@material-ui/icons/BubbleChart";
 // import LocationOn from "@material-ui/icons/LocationOn";
@@ -10,15 +11,17 @@ import Person from "@material-ui/icons/Person";
 // core components/views for Admin layout
 import DashboardPage from "Admin/views/Dashboard/Dashboard.js";
 import UserProfile from "Admin/views/UserProfile/UserProfile.js";
-import TableList from "Admin/views/TableList/TableList.js";
+//import TableList from "Admin/views/TableList/TableList.js";
 import AddVendor from "Admin/views/TableList/AddVendor";
 import AddScrap from "Admin/views/TableList/AddScrap";
+import Logout from "User/views/LoginPage/Logout";
+import ScrapList from "Admin/views/TableList/ScrapList";
 //import Icons from "Admin/views/Icons/Icons.js";
 // import Maps from "Admin/views/Maps/Maps.js";
 // import NotificationsPage from "Admin/views/Notifications/Notifications.js";
 // import UpgradeToPro from "Admin/views/UpgradeToPro/UpgradeToPro.js";
 // core components/views for RTL layout
-import RTLPage from "Admin/views/RTLPage/RTLPage.js";
+//import RTLPage from "Admin/views/RTLPage/RTLPage.js";
 
 const dashboardRoutes = [
   {
@@ -29,17 +32,17 @@ const dashboardRoutes = [
     component: DashboardPage,
     layout: "/admin"
   },
-   {
-    path: "/user",
-    name: "User Profile",
-    rtlName: "ملف تعريفي للمستخدم",
-    icon: Person,
-    component: UserProfile,
-    layout: "/admin"
-  },
+  //  {
+  //   path: "/user",
+  //   name: "User Profile",
+  //   rtlName: "ملف تعريفي للمستخدم",
+  //   icon: Person,
+  //   component: UserProfile,
+  //   layout: "/admin"
+  // },
   {
     path: "/add-scrap",
-    name: "Add Scrap ",
+    name: "Scrap Details",
     rtlName: "قائمة الجدول",
     icon: "content_paste",
     component: AddScrap,
@@ -49,18 +52,26 @@ const dashboardRoutes = [
     path: "/add-vendor",
     name: "Users Details ",
     rtlName: "قائمة الجدول",
-    icon: "content_paste",
+    icon: Person,
     component: AddVendor,
     layout: "/admin"
   },
-  // {
-  //   path: "/typography",
-  //   name: "Typography",
-  //   rtlName: "طباعة",
-  //   icon: LibraryBooks,
-  //   component: Typography,
-  //   layout: "/admin"
-  // },
+  {
+    path: "/scrap-list",
+    name: "Scrap List",
+    rtlName: "طباعة",
+    icon: "content_paste",
+    component: ScrapList,
+    layout: "/admin"
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    rtlName: "طباعة",
+    icon: Out,
+    component: Logout,
+    layout: "/admin"
+  },
   // {
   //   path: "/icons",
   //   name: "Icons",
