@@ -8,7 +8,6 @@ import Footer from "User/components/Footer/Footer.js";
 import GridContainer from "User/components/Grid/GridContainer.js";
 import GridItem from "User/components/Grid/GridItem.js";
 import Button from "User/components/CustomButtons/Button.js";
-import Badge from "User/components/Badge/Badge";
 import styles from "../assets/jss/material-kit-react/views/loginPage";
 
 import image from "../assets/img/kbg.png";
@@ -26,8 +25,7 @@ export default function LoginPage(props) {
         <div>
             <a href="/">
             <Header
-                absolute
-              
+                absolute  
                 brand="Scrap Mart"
                 rightLinks={<HeaderLinks />}
                 {...rest}

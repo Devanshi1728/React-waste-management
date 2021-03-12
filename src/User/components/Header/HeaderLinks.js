@@ -29,6 +29,16 @@ export default function HeaderLinks(props) {
   // console.log(isLoggedIn)
   return (
     <List className={classes.list}>
+      {/* <ListItem className={classes.listItem}>
+        <Button
+          href="./"
+          color="transparent"
+
+          className={classes.navLink}
+        >
+          Home
+        </Button>
+      </ListItem> */}
       <ListItem className={classes.listItem}>
         <Button
           href="./ratecard"
@@ -39,17 +49,18 @@ export default function HeaderLinks(props) {
           Scrap Rate
         </Button>
       </ListItem>
-      <ListItem className={classes.listItem}>
-        <Button
-          href="./request"
-          color="transparent"
-          className={classes.navLink}
-        >
-          Pickup Request
-        </Button>
-      </ListItem>
       {
         isLoggedIn ? (
+          <>
+            <ListItem className={classes.listItem}>
+              <Button
+                href="./request"
+                color="transparent"
+                className={classes.navLink}
+              >
+                Pickup Request
+        </Button>
+            </ListItem>
           <ListItem className={classes.listItem}>
             <CustomDropdown
               noLiPadding
@@ -74,6 +85,7 @@ export default function HeaderLinks(props) {
                 ]}
             />
           </ListItem>
+        </>
         ) :
       <>
       <ListItem className={classes.listItem}>

@@ -1,11 +1,9 @@
 import React from "react";
 // @material-ui/core components
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
 import People from "@material-ui/icons/People";
 // core components
-import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -24,15 +22,13 @@ import CardFooter from "User/components/Card/CardFooter.js";
 import CustomInput from "User/components/CustomInput/CustomInput.js";
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
-import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
 
-import styles from "../assets/jss/material-kit-react/views/loginPage.js";
+//import styles from "../assets/jss/material-kit-react/views/loginPage.js";
 
 import image from "../assets/img/kbg.png";
-import { HomeOutlined, Label, Phone } from "@material-ui/icons";
+import { Phone } from "@material-ui/icons";
 
 //const useStyles = makeStyles(styles);
 const useStyles = makeStyles((theme) => ({
@@ -104,16 +100,16 @@ export default function LoginPage(props) {
         setPersonName(event.target.value);
     };
 
-    const handleChangeMultiple = (event) => {
-        const { options } = event.target;
-        const value = [];
-        for (let i = 0, l = options.length; i < l; i += 1) {
-            if (options[i].selected) {
-                value.push(options[i].value);
-            }
-        }
-        setPersonName(value);
-    };
+    // const handleChangeMultiple = (event) => {
+    //     const { options } = event.target;
+    //     const value = [];
+    //     for (let i = 0, l = options.length; i < l; i += 1) {
+    //         if (options[i].selected) {
+    //             value.push(options[i].value);
+    //         }
+    //     }
+    //     setPersonName(value);
+    // };
 
     //////////////////////////////////////
 

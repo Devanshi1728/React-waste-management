@@ -3,8 +3,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import React, { useState } from "react";
+import React from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
@@ -67,7 +66,7 @@ export default function AddVendor() {
         //if (!phoneErr && !cityErr && !pwdErr && !userErr) {
         axios.post('http://127.0.0.1:5000/item', data, {
             headers:
-                { 'Authorization': "Bearer " + `${t.token}` }
+                { 'Authorization': `Bearer ${t.token}` }
             }).then(response => {
                 console.log("Response = ", response.data);
                 alert(" Item Added Successfully " + data.item_name)
@@ -156,7 +155,7 @@ export default function AddVendor() {
                     </Button> */}
                 </DialogActions>
             </Dialog>
-            {/* <ScrapList /> */}
+            <ScrapList />
         </div>
     );
 }

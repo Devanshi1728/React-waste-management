@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import React,{useState} from "react";
+import React, { useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import CardHeader from "Admin/components/Card/CardHeader.js";
@@ -17,19 +17,18 @@ import axios from "axios";
 
 const useStyles = makeStyles(styles);
 
-const EditScrap=(props) => {
-    const {name,id,price,items} =props
+const EditVendor = (props) => {
+    const { name, id, city, phone, vendors } = props
     const [data, setData] = useState({
-        item_name: name,
-        item_id: id,
-        item_price: price
+        username: name,
+        id: id,
+        city: city,
+        phone:phone
     });
     //var history = useHistory();
     const classes = useStyles();
 
     const t = JSON.parse(localStorage.getItem("token"));
-
-    
     console.log(data)
     const Inputevent = (event) => {
         const { name, value } = event.target;
@@ -43,43 +42,46 @@ const EditScrap=(props) => {
             }
         });
     }
-   
+
     const formSubmit = (event) => {
         event.preventDefault();
-        console.log("Scrap Data = ", data)
+        console.log("Vendor Data = ", data)
 
-        axios.put('http://127.0.0.1:5000/item/' + data.item_id, { item_price: data.item_price}, {
+        axios.put('http://127.0.0.1:5000/user/' + data.id,
+            { username: data.username, city: data.city, phone: data.phone },
+            {
             headers:
                 { 'Authorization': `Bearer ${t.token}` }
-        }).then(response => {       
-            alert(" Item Updated Successfully " + data.item_name)
-            const index = items.findIndex((item) => item.Item_id === data.item_id)
-            items[index].Item_price = data.item_price;
-            props.setItems({Items:items})
+            }).then(response => {
+            console.log(response)
+            alert(data.username + "  Updated Successfully ")
+            const index = vendors.findIndex((vendor) => vendor.UserId === data.id)
+            vendors[index].Username = data.username;
+            vendors[index].City = data.city;
+            vendors[index].Phone = data.phone
+            props.setVendors({ Vendors: vendors })
             props.setOpen(false);
         })
             .catch(error => {
-                console.log("Error ", error.response);
+                console.log("Error ", error);
             });
     }
     return (
         <div>
-            {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-                Edit Scrap
-            </Button> */}
             <Dialog open={props.open} onClose={props.handleClose} aria-labelledby="form-dialog-title">
-                
+
                 <DialogContent>
                     <form className={classes.form} onSubmit={formSubmit}>
                         <CardHeader color="success" className={classes.cardHeader}>
-                            <h4>Modify Scrap</h4>
+                            <h4>Update Vendor Details</h4>
                         </CardHeader>
                         <CardBody>
                             <CustomInput
                                 required
-                                labelText="Item Name"
-                                name="item_name"
-                                value={data.item_name}
+                                labelText="Vendor Name"
+                                name="username"
+                                value={data.username}
+                                onChange={Inputevent}
                                 formControlProps={{
                                     fullWidth: true,
                                 }}
@@ -90,9 +92,23 @@ const EditScrap=(props) => {
                             />
                             <CustomInput
                                 required
-                                labelText="Item Price"
-                                name="item_price"
-                                value={data.item_price}
+                                labelText="City"
+                                name="city"
+                                value={data.city}
+                                onChange={Inputevent}
+                                formControlProps={{
+                                    fullWidth: true,
+                                }}
+                                type="text"
+                                inputProps={{
+                                    type: "text"
+                                }}
+                            />
+                            <CustomInput
+                                required
+                                labelText="Phone"
+                                name="phone"
+                                value={data.phone}
                                 onChange={Inputevent}
                                 formControlProps={{
                                     fullWidth: true,
@@ -103,22 +119,20 @@ const EditScrap=(props) => {
                                 }}
                             />
                             {/* {userErr ? <span style={{ "color": "red" }}>username require Valid data</span> : <span></span>} */}
-                           
-    
                             {/* {pwdErr ? <span style={{ "color": "red" }}>Password require Valid data</span> : ""} */}
                         </CardBody>
                         <CardFooter className={classes.cardFooter}>
                             <Button type="submit" simple color="primary" size="lg">
-                                Update Scrap
+                                Update Vendor
                             </Button>
                         </CardFooter>
                     </form>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={()=>{props.setOpen(false)}} color="primary">
+                    <Button onClick={() => { props.setOpen(false) }} color="primary">
                         Cancel
                     </Button>
-                     {/* <Button onClick={handleClose} color="primary">
+                    {/* <Button onClick={handleClose} color="primary">
                         Subscribe
                     </Button>  */}
                 </DialogActions>
@@ -127,4 +141,4 @@ const EditScrap=(props) => {
         </div>
     );
 }
-export default EditScrap
+export default EditVendor

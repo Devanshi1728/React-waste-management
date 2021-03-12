@@ -2,26 +2,12 @@
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
 import Out from "@material-ui/icons/ExitToAppOutlined"
-// import LibraryBooks from "@material-ui/icons/LibraryBooks";
-// import BubbleChart from "@material-ui/icons/BubbleChart";
-// import LocationOn from "@material-ui/icons/LocationOn";
-// import Notifications from "@material-ui/icons/Notifications";
-// import Unarchive from "@material-ui/icons/Unarchive";
-// import Language from "@material-ui/icons/Language";
-// core components/views for Admin layout
 import DashboardPage from "Admin/views/Dashboard/Dashboard.js";
-import UserProfile from "Admin/views/UserProfile/UserProfile.js";
-//import TableList from "Admin/views/TableList/TableList.js";
 import AddVendor from "Admin/views/TableList/AddVendor";
 import AddScrap from "Admin/views/TableList/AddScrap";
 import Logout from "User/views/LoginPage/Logout";
-import ScrapList from "Admin/views/TableList/ScrapList";
-//import Icons from "Admin/views/Icons/Icons.js";
-// import Maps from "Admin/views/Maps/Maps.js";
-// import NotificationsPage from "Admin/views/Notifications/Notifications.js";
-// import UpgradeToPro from "Admin/views/UpgradeToPro/UpgradeToPro.js";
-// core components/views for RTL layout
-//import RTLPage from "Admin/views/RTLPage/RTLPage.js";
+import CustomerList from "Admin/views/TableList/CustomerList";
+
 
 const dashboardRoutes = [
   {
@@ -41,27 +27,27 @@ const dashboardRoutes = [
   //   layout: "/admin"
   // },
   {
-    path: "/add-scrap",
-    name: "Scrap Details",
-    rtlName: "قائمة الجدول",
-    icon: "content_paste",
-    component: AddScrap,
-    layout: "/admin"
-  },
-  {
     path: "/add-vendor",
-    name: "Users Details ",
+    name: "Manage Vendor",
     rtlName: "قائمة الجدول",
     icon: Person,
     component: AddVendor,
     layout: "/admin"
   },
   {
-    path: "/scrap-list",
-    name: "Scrap List",
+    path: "/customer-list",
+    name: "Manage Customer",
     rtlName: "طباعة",
+    icon: Person,
+    component: CustomerList,
+    layout: "/admin"
+  },
+  {
+    path: "/add-scrap",
+    name: "Manage Scrap",
+    rtlName: "قائمة الجدول",
     icon: "content_paste",
-    component: ScrapList,
+    component: AddScrap,
     layout: "/admin"
   },
   {

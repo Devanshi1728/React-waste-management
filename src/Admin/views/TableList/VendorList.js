@@ -12,8 +12,8 @@ import Card from "Admin/components/Card/Card.js";
 import CardHeader from "Admin/components/Card/CardHeader.js";
 import CardBody from "Admin/components/Card/CardBody.js";
 import axios from "axios";
+import EditVendor from "./EditVendor";
 
-const URL = 'http://127.0.0.1:5000/delete'
 const styles = {
     cardCategoryWhite: {
         "&,& a,& a:hover,& a:focus": {
@@ -48,24 +48,38 @@ const useStyles = makeStyles(styles);
 
 export default function VendorList() {
     const classes = useStyles();
+   
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+    const [name, setName] = useState("")
+    const [city, setCity] = useState("")
+    const [phone, setPhone] = useState(null)
+
+
+    const handleClickOpen = (id, name, city, phone) => {
+        setId(id)
+        setName(name)
+        setCity(city)
+        setPhone(phone)
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     const [vendors, setVendors] = useState(null);
     useEffect(() => {
         getData()
     }, [])
 
     const getData = async () => {
-        const response = await axios.get("http://127.0.0.1:5000/userlist")
+        const response = await axios.get("http://127.0.0.1:5000/vendorlist")
+        console.log(response.data)
         setVendors(response.data)
-        console.log("Role = ", response.data.Users.Role)
-        // console.log("data.username = ",response.data.Users.Username)
-        // axios.get("http://127.0.0.1:5000/userlist")
-        //     .then(response => {
-        //         setVendors(response.data)
-        //         //console.log(response.data.TotalUsers)
-        //         //console.log(response.data.Users)
     }
     const renderHeader = () => {
-        let headerElement = ['username', 'Role', 'city', 'phone', 'Delete']
+        let headerElement = ['username', 'Role', 'city', 'phone', 'Delete', 'Modify']
         return headerElement.map((key, index) => {
             return key.toUpperCase()
         })
@@ -75,42 +89,23 @@ export default function VendorList() {
     const removeData = (id) => {
         axios.delete(`http://127.0.0.1:5000/delete`,
             {
-                headers: { 'Authorization': "Bearer " + `${t.token}` },
+                headers: { 'Authorization': "Bearer " | `${t.token}` },
                 data: { username: id }
             }).then(res => {
                 const del = vendors.Users.filter(Users => id !== Users.UserId)
                 console.log("Response del= ", del)
                 setVendors(del)
-                console.log("vendors ",vendors)
+                console.log("vendors ", vendors)
                 alert("Vendor Deleted Successfully")
-        }).catch(error => {
-            console.log("id", id)
-            console.log("Error : ", error)
-        })
+            }).catch(error => {
+                console.log("id", id)
+                console.log("Error : ", error)
+            })
     }
 
-    // const EditData = (id) => {
-    //     console.log("Edit called")
-    //     axios.put(`http://127.0.0.1:5000/user`,
-    //         {
-    //             headers:
-    //                 { 'Authorization': "Bearer " + `${t.token}` }, data: { id: id }
-    //         }).then(res => {
-    //         //const del = vendors.Users.filter(Users => id !== Users.UserId)
-    //         console.log("Response = ", res)
-
-    //         setVendors(res)
-    //         alert("Data Updated Successfully")
-    //     }).catch(error => {
-    //         console.log("id", id)
-    //         //console.log("Users.UserId ", Userid)
-    //         console.log("Error : ", error)
-    //     })
-    // }
-
     const renderBody = (props) => {
-        console.log(vendors)
-        return vendors && vendors.Users ? vendors.Users.map(({ Username, Role, City, Phone }) => {
+        //console.log(vendors)
+        return vendors && vendors.Vendors ? vendors.Vendors.map(({ UserId, Username, Role, City, Phone }) => {
             return [Username, Role, City, Phone,
                 <Button
                     variant="contained"
@@ -119,41 +114,27 @@ export default function VendorList() {
                     className={classes.button}
                     startIcon={<DeleteIcon />}
                     onClick={() => removeData(Username)}
-                >Delete</Button>
-                // <Button
-                //     variant="contained"
-                //     color="primary"
-                //     size="small"
-                //     className={classes.button}
-                //     startIcon={<EditIcon />}
-                //     onClick={() => EditData(UserId)}
-                // >Edit</Button>
+                >Delete</Button>,
+                <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    className={classes.button}
+                    startIcon={<EditIcon />}
+                    onClick={() => handleClickOpen(UserId, Username, City, Phone)}
+                >Edit</Button>
             ]
-            //<Button onClick={() => removeData(Username)}>Delete</Button>]
         }) : []
     }
-
     return (
-        // <>
-        //     <h1 id='title'>React Table</h1>
-        //     <table id='employee'>
-        //         <thead>
-        //             <tr>{renderHeader()}</tr>
-        //         </thead>
-        //         <tbody>
-        //             {renderBody()}
-        //         </tbody>
-        //     </table>
-        // </>
-        // );
         <GridContainer>
+            {
+            open ?
+                    <EditVendor name={name} id={id} city={city} phone={phone} open={open} setOpen={setOpen} vendors={vendors.Vendors} setVendors={setVendors} /> : null}
             <GridItem xs={12} sm={12} md={12}>
                 <Card>
                     <CardHeader color="primary">
-                        <h4 className={classes.cardTitleWhite}>Simple Table</h4>
-                        <p className={classes.cardCategoryWhite}>
-                            Here is a subtitle for this table
-            </p>
+                        <h4 className={classes.cardTitleWhite}>Vendor Details</h4>
                     </CardHeader>
                     <CardBody>
                         <Table

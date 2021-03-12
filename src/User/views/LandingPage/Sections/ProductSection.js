@@ -1,17 +1,17 @@
 import React from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import classNames from "classnames";
+//import classNames from "classnames";
 // @material-ui/icons
-import Chat from "@material-ui/icons/Chat";
+//import Chat from "@material-ui/icons/Chat";
 import GridContaineri from "User/components/Grid/GridContainer.js";
-import VerifiedUser from "@material-ui/icons/VerifiedUser";
+//import VerifiedUser from "@material-ui/icons/VerifiedUser";
 import SportsHandballOutlined from "@material-ui/icons/SportsHandball";
 // core components
 import GridContainer from "User/components/Grid/GridContainer.js";
 import GridItem from "User/components/Grid/GridItem.js";
 import InfoArea from "User/components/InfoArea/InfoArea.js";
-import image1 from "User/assets/img/hand.png";
+//import image1 from "User/assets/img/hand.png";
 import styles from "../../../assets/jss/material-kit-react/views/landingPageSections/productStyle.js";
 
 const useStyles = makeStyles(styles);

@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import Email from "@material-ui/icons/Email";
 import People from "@material-ui/icons/People";
 // core components
 import { useHistory } from "react-router-dom";
@@ -22,15 +21,17 @@ import CustomInput from "User/components/CustomInput/CustomInput.js";
 
 import styles from "../../assets/jss/material-kit-react/views/loginPage.js";
 import image from "../../assets/img/kbg.png";
-import { HomeOutlined, Phone } from "@material-ui/icons";
 import axios from "../../../axios";
-
-
 
 const useStyles = makeStyles(styles);
 
 export default function LoginPage(props) {
   var history = useHistory();
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      history.push('/request')
+    }
+  }, [])
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   setTimeout(function () {
     setCardAnimation("");
@@ -59,9 +60,6 @@ export default function LoginPage(props) {
     });
   }
 
-
-
-
   const formSubmit = (event) => {
     console.log('test submit', data)
     event.preventDefault();
@@ -77,8 +75,10 @@ export default function LoginPage(props) {
           });
           localStorage.setItem('login', JSON.stringify({
             login: true,
-            role: response.data.role,
           }));
+          localStorage.setItem('role', JSON.stringify({
+            role: response.data.role,
+          }))
           localStorage.setItem('token', JSON.stringify({
             token: response.data.access_token,
           }));

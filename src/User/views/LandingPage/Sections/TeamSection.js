@@ -9,10 +9,8 @@ import { makeStyles } from "@material-ui/core/styles";
 // core components
 import GridContainer from "User/components/Grid/GridContainer.js";
 import GridItem from "User/components/Grid/GridItem.js";
-import Button from "User/components/CustomButtons/Button.js";
 import Card from "User/components/Card/Card.js";
 import CardBody from "User/components/Card/CardBody.js";
-import CardFooter from "User/components/Card/CardFooter.js";
 
 import styles from "../../../assets/jss/material-kit-react/views/landingPageSections/teamStyle.js";
 

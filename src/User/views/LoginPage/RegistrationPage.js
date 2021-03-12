@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -22,15 +22,18 @@ import styles from "../../assets/jss/material-kit-react/views/loginPage.js";
 
 import image from "../../assets/img/kbg.png";
 import { HomeOutlined, Phone } from "@material-ui/icons";
-
-//import { Router, Switch, Redirect, Route } from "react-router-dom";
-//import axios from 'axios';
 import axios from "../../../axios";
 import { useHistory } from "react-router";
 
 const useStyles = makeStyles(styles);
 
 export default function RegistrationPage(props) {
+
+    useEffect(()=> {
+        if (localStorage.getItem("token")) {
+            history.push('/request')
+        }
+    }, [])
 
     var history = useHistory();
     const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
@@ -60,7 +63,7 @@ export default function RegistrationPage(props) {
         if (data[name].length < 3) { setUserErr(true) } else { setUserErr(false) }
         if (data[name].length < 3) { setPwdErr(true) } else { setPwdErr(false) }
         if (data[name].length < 3) { setCityErr(true) } else { setCityErr(false) }
-        if (data[name].length == 9) { setPhoneErr(false) } else { setPhoneErr(true) }
+        if (data[name].length === 9) { setPhoneErr(false) } else { setPhoneErr(true) }
         setData((preVal) => {
             return {
                 ...preVal,

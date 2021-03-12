@@ -3,16 +3,13 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import React, { useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-// import People from "@material-ui/icons/People";
 // // core components
-import Snackbar from '@material-ui/core/Snackbar';
 import People from "@material-ui/icons/People";
 import CardHeader from "Admin/components/Card/CardHeader.js";
 import CardBody from "Admin/components/Card/CardBody.js";
@@ -20,7 +17,6 @@ import CardFooter from "Admin/components/Card/CardFooter.js";
 import CustomInput from "Admin/components/CustomInput/CustomInput.js";
 import styles from "../../../User/assets/jss/material-kit-react/views/loginPage";
 import axios from "axios";
-import Notifications from "Admin/views/Notifications/Notifications";
 //import image from "../../assets/img/kbg.png";
 import { HomeOutlined, Phone } from "@material-ui/icons";
 import VendorList from "Admin/views/TableList/VendorList";
@@ -59,7 +55,7 @@ export default function AddVendor() {
         if (data[name].length < 3) { setUserErr(true) } else { setUserErr(false) }
         if (data[name].length < 3) { setPwdErr(true) } else { setPwdErr(false)}
         if (data[name].length < 3) { setCityErr(true) } else { setCityErr(false)}
-        if (data[name].length == 9) { setPhoneErr(false) } else { setPhoneErr(true) }
+        if (data[name].length === 9) { setPhoneErr(false) } else { setPhoneErr(true) }
         setData((preVal) => {
             return {
                 ...preVal,
@@ -185,7 +181,7 @@ export default function AddVendor() {
                         </CardBody>
                         <CardFooter className={classes.cardFooter}>
                             <Button type="submit" simple color="success" size="lg">
-                                SignUp
+                               Add Vendor
                             </Button>
                         </CardFooter>
                     </form>

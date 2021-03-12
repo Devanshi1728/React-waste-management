@@ -21,7 +21,7 @@ import routes from "routes.js";
 import styles from "Admin/assets/jss/material-dashboard-react/layouts/adminStyle.js";
 
 import bgImage from "Admin/assets/img/sidebar-2.jpg";
-import logo from "Admin/assets/img/reactlogo.png";
+//import logo from "User/assets/img/kabadi.png";
 
 const switchRoutes = (
   <Switch>
@@ -52,21 +52,21 @@ export default function Admin({ ...rest }) {
   // states and functions
   const [image, setImage] = React.useState(bgImage);
   const [color, setColor] = React.useState("blue");
-  const [fixedClasses, setFixedClasses] = React.useState("dropdown show");
+  //const [fixedClasses, setFixedClasses] = React.useState("dropdown show");
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const handleImageClick = image => {
-    setImage(image);
-  };
-  const handleColorClick = color => {
-    setColor(color);
-  };
-  const handleFixedClick = () => {
-    if (fixedClasses === "dropdown") {
-      setFixedClasses("dropdown show");
-    } else {
-      setFixedClasses("dropdown");
-    }
-  };
+  // const handleImageClick = image => {
+  //   setImage(image);
+  // };
+  // const handleColorClick = color => {
+  //   setColor(color);
+  // };
+  // const handleFixedClick = () => {
+  //   if (fixedClasses === "dropdown") {
+  //     setFixedClasses("dropdown show");
+  //   } else {
+  //     setFixedClasses("dropdown");
+  //   }
+  // };
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -100,8 +100,8 @@ export default function Admin({ ...rest }) {
     <div className={classes.wrapper}>
       <Sidebar
         routes={routes}
-        logoText={"Creative Tim"}
-        logo={logo}
+        logoText={"Scrap Mart"}
+        //logo={logo}
         image={image}
         handleDrawerToggle={handleDrawerToggle}
         open={mobileOpen}
