@@ -2,7 +2,7 @@ import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react components for routing our app without refresh
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
@@ -58,7 +58,7 @@ export default function Components(props) {
                 <h1 className={classes.title} >Sell Your<span style={{ "color": "black" }}> Scrap</span></h1>
                 <h3 className={classes.subtitle} style={{ "fontWeight":"bold" }}>
                   Earn more <span style={{ "color": "black" }}>by Selling more</span>
-                </h3><br></br> <Link to={"/ratecard"}>
+                </h3><br></br> <NavLink to={"/ratecard"}>
                 <Button
                   color="white"
                   size="lg"                
@@ -68,7 +68,7 @@ export default function Components(props) {
                 >
                   {/* <i className="fas fa-watch" /> */}
                  Get Started
-              </Button></Link>
+              </Button></NavLink>
               </div>
             </GridItem>
           </GridContainer>

@@ -5,9 +5,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 //import EditIcon from '@material-ui/icons/Edit';
 import Button from "@material-ui/core/Button/Button"
 // core components
+import MUIDataTable from "mui-datatables";
 import GridItem from "Admin/components/Grid/GridItem.js";
 import GridContainer from "Admin/components/Grid/GridContainer.js";
-import Table from "Admin/components/Table/Table.js";
 import Card from "Admin/components/Card/Card.js";
 import CardHeader from "Admin/components/Card/CardHeader.js";
 import CardBody from "Admin/components/Card/CardBody.js";
@@ -67,23 +67,22 @@ export default function VendorList() {
     const removeData = (id) => {
         axios.delete(`http://127.0.0.1:5000/delete`,
             {
-                headers: { 'Authorization': "Bearer " | `${t.token}` },
+                headers: { 'Authorization': `Bearer ${t.token}` },
                 data: { username: id }
             }).then(res => {
-                const del = vendors.Users.filter(Users => id !== Users.UserId)
-                console.log("Response del= ", del)
-                setVendors(del)
-                console.log("vendors ", vendors)
-                alert("Vendor Deleted Successfully")
+                //const del = vendors.Users.filter(Users => id !== Users.UserId)
+                alert("Customer Deleted Successfully")
+                getData()
+                //setVendors(del)
             }).catch(error => {
-                console.log("id", id)
+                //console.log("id", id)
                 console.log("Error : ", error)
             })
     }
 
     const renderBody = (props) => {
         console.log(vendors)
-        return vendors && vendors.Users ? vendors.Users.map(({ Username, Role, City, Phone }) => {
+        return vendors && vendors.Users ? vendors.Users?.map(({ Username, Role, City, Phone }) => {
             return [Username, Role, City, Phone,
                 <Button
                     variant="contained"
@@ -108,10 +107,11 @@ export default function VendorList() {
                         </p> */}
                     </CardHeader>
                     <CardBody>
-                        <Table
-                            tableHeaderColor="primary"
-                            tableHead={renderHeader()}
-                            tableData={renderBody()}
+                        <MUIDataTable
+                            title={"ScrapMart User list"}
+                            data={renderBody()}
+                            columns={renderHeader()}
+                           // options={options}
                         />
                     </CardBody>
                 </Card>

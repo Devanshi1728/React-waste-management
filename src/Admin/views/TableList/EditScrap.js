@@ -28,7 +28,6 @@ const EditScrap=(props) => {
     const classes = useStyles();
 
     const t = JSON.parse(localStorage.getItem("token"));
-
     
     console.log(data)
     const Inputevent = (event) => {
@@ -57,10 +56,10 @@ const EditScrap=(props) => {
             items[index].Item_price = data.item_price;
             props.setItems({Items:items})
             props.setOpen(false);
-        })
-            .catch(error => {
-                console.log("Error ", error.response);
-            });
+        }).catch(error => {
+            console.log("Error ", error.response);
+            props.setOpen(false);
+        });
     }
     return (
         <div>
@@ -85,7 +84,8 @@ const EditScrap=(props) => {
                                 }}
                                 type="text"
                                 inputProps={{
-                                    type: "text"
+                                    type: "text",
+                                    disabled: true,
                                 }}
                             />
                             <CustomInput
@@ -102,6 +102,7 @@ const EditScrap=(props) => {
                                     type: "text"
                                 }}
                             />
+                            
                             {/* {userErr ? <span style={{ "color": "red" }}>username require Valid data</span> : <span></span>} */}
                            
     

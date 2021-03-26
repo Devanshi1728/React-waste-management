@@ -3,7 +3,7 @@ import React from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 // react components for routing our app without refresh
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -40,26 +40,25 @@ export default function HeaderLinks(props) {
         </Button>
       </ListItem> */}
       <ListItem className={classes.listItem}>
-        <Button
-          href="./ratecard"
+        <NavLink to="./ratecard"
           color="transparent"
         
           className={classes.navLink}
         >
           Scrap Rate
-        </Button>
+        </NavLink>
       </ListItem>
       {
         isLoggedIn ? (
           <>
             <ListItem className={classes.listItem}>
-              <Button
-                href="./request"
+              <NavLink
+                to="./request"
                 color="transparent"
                 className={classes.navLink}
               >
                 Pickup Request
-        </Button>
+        </NavLink>
             </ListItem>
           <ListItem className={classes.listItem}>
             <CustomDropdown
@@ -69,19 +68,17 @@ export default function HeaderLinks(props) {
                 className: classes.navLink,
                 color: "transparent"
               }}
-              //buttonIcon={Apps}
-
               dropdownList={
                 [
-                  <Link to="/" className={classes.dropdownLink}>
+                  <NavLink to="/" className={classes.dropdownLink}>
                     My Order
-            </Link>,
-                  <Link to="/" className={classes.dropdownLink}>
+            </NavLink>,
+                  <NavLink to="/change" className={classes.dropdownLink}>
                     Change Password
-            </Link>,
-                  <Link to="/logout" className={classes.dropdownLink}>
+            </NavLink>,
+                  <NavLink to="/logout" className={classes.dropdownLink}>
                     Log out
-            </Link>
+            </NavLink>
                 ]}
             />
           </ListItem>
@@ -89,23 +86,23 @@ export default function HeaderLinks(props) {
         ) :
       <>
       <ListItem className={classes.listItem}>
-        <Button
-          href="./signup"
+        <NavLink
+          to="./signup"
           color="transparent"
           className={classes.navLink}
         >
               SignUp
-        </Button>
+        </NavLink>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button
-          href="/login-page"
+        <NavLink
+          to="/login-page"
           color="transparent"
-         
+        
           className={classes.navLink}
         >
               Login
-        </Button>
+        </NavLink>
       </ListItem>
         </>
       }

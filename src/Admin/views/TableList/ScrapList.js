@@ -3,18 +3,17 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import Button from "@material-ui/core/Button/Button"
+import Button from "@material-ui/core/Button/Button";
 // core components
+import MUIDataTable from "mui-datatables";
 import GridItem from "Admin/components/Grid/GridItem.js";
 import GridContainer from "Admin/components/Grid/GridContainer.js";
-import Table from "Admin/components/Table/Table.js";
 import Card from "Admin/components/Card/Card.js";
 import CardHeader from "Admin/components/Card/CardHeader.js";
 import CardBody from "Admin/components/Card/CardBody.js";
 import EditScrap from "./EditScrap";
 import axios from "axios";
 //import { useHistory } from "react-router";
-
 
 const styles = {
     cardCategoryWhite: {
@@ -48,7 +47,6 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-
 export default function ScrapList(props) {
     //var history = useHistory();
     const [name, setName] = useState("")
@@ -58,6 +56,11 @@ export default function ScrapList(props) {
     const t = JSON.parse(localStorage.getItem("token"));
 
     const classes = useStyles();
+    const options = {
+        filter: true,
+        filterType: "dropdown",
+        responsive: "standard"
+    };
 
     const [open, setOpen] = useState(false);
 
@@ -71,21 +74,27 @@ export default function ScrapList(props) {
     const handleClose = () => {
         setOpen(false);
     };
-    
-    const [items, setItems] = useState(null)
+    const { items, setItems } = props; //run kru? english may i yens now run this? not working
+    // show me parent component
+    // const [items, setItems] = useState(null) // Why declaring here when using props..thisis not for props..before it im sstoring value to show in table
     useEffect(() => {
         getData()
+        props.setItems({ items })
+        //console.log(props.setItems)
     }, [])
 
     const getData = async () => {
         const response = await axios.get("http://127.0.0.1:5000/itemlist", {
             headers: {
                 "Authorization": `Bearer ${t.token}`
-            }})
-        setItems(response.data)
+            }
+        })
+        console.log(response.data)
+        props.setItems(response.data)
     }
+    
     const renderHeader = () => {
-        let headerElement = ['item_name', 'item_price', 'Delete', 'Modify']
+        let headerElement = ['category','item_name', 'item_price', 'Delete', 'Modify']
         return headerElement.map((key, index) => {
             return key.toUpperCase()
         })
@@ -97,11 +106,10 @@ export default function ScrapList(props) {
                 headers: { 'Authorization': `Bearer ${t.token}` },
                 data: { item_name: id }
             }).then(res => {
-            const del = items.Items.filter(Items => id !== Items.Item_Id)
-                console.log("Response del= ", del)
-                console.log("Status = ",res.status)
-            setItems(del)
-            alert("Item Deleted Successfully")
+                //const del = items.Items.filter(Items => id !== Items.Item_Id)
+                alert("Item Deleted Successfully")
+                getData()
+                //setItems(del)
             }).catch(error => {
                 console.log("Status = ", error.status)
                 //    alert("Item with given name already exist")
@@ -111,11 +119,9 @@ export default function ScrapList(props) {
     }
 
     const renderBody = (props) => {
-        console.log(items)
-        //item.map(row => console.log(row.name))
-        
-        return items ? items.Items.map(({ Item_id, Item_name, Item_price }) => {
-            return [Item_name, Item_price,
+        return items && items.Items ? items.Items?.map(({ Category, Item_id, Item_name, Item_price, measure }) => {
+            return [Category, Item_name, Item_price + '/' + measure,
+                                       
                 <Button
                     variant="contained"
                     color="secondary"
@@ -133,7 +139,6 @@ export default function ScrapList(props) {
                     onClick={() => handleClickOpen(Item_name,Item_price,Item_id)}
                 >Edit</Button>
             ]
-            //<Button onClick={() => removeData(Username)}>Delete</Button>]
         }) : []
     }
 
@@ -150,10 +155,11 @@ export default function ScrapList(props) {
                          </p> */}
                     </CardHeader>
                     <CardBody>
-                        <Table
-                            tableHeaderColor="primary"
-                            tableHead={renderHeader()}
-                            tableData={renderBody()}
+                        <MUIDataTable
+                            title={"ScrapMart Scrap list"}
+                            data={renderBody()}
+                            columns={renderHeader()}
+                            options={options}
                         />
                     </CardBody>
                 </Card>

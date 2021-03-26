@@ -28,7 +28,7 @@ export default function TeamSection() {
   );
   return (
     <div className={classes.section}>
-      <h2 className={classes.title}>Let's talk about Service</h2>
+      <h2 className={classes.title}>Our Service</h2>
       <div>
         <GridContainer>
           <GridItem xs={12} sm={12} md={4}>

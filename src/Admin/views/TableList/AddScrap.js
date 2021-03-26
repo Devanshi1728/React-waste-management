@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import React from "react";
+import React, {useState} from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from '@material-ui/core/InputLabel';
@@ -23,7 +23,7 @@ import ScrapList from "Admin/views/TableList/ScrapList";
 
 const useStyles = makeStyles(styles);
 
-export default function AddVendor() {
+export default function AddScrap() {
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
 
@@ -36,22 +36,17 @@ export default function AddVendor() {
     const handleClose = () => {
         setOpen(false);
     };
-
+    const [items, setItems] = useState('') //  i declare this
     const [data, setData] = React.useState({
         category_id:'',
         item_name: '',
-        item_price: ''
+        item_price: '',
+        measure:''
     });
-    // const [userErr, setUserErr] = useState(false)
-    // const [pwdErr, setPwdErr] = useState(false)
-    // const [cityErr, setCityErr] = useState(false)
-
 
     const Inputevent = (event) => {
         const { name, value } = event.target;
-        // if (data[name].length < 3) { setUserErr(true) } else { setUserErr(false) }
-        // if (data[name].length < 3) { setPwdErr(true) } else { setPwdErr(false) }
-
+    
         setData((preVal) => {
             return {
                 ...preVal,
@@ -62,21 +57,30 @@ export default function AddVendor() {
     const t = JSON.parse(localStorage.getItem("token"));
     const formSubmit = (event) => {
         event.preventDefault();
-        console.log("SCrap Data = ",data)
-        //if (!phoneErr && !cityErr && !pwdErr && !userErr) {
+        //console.log("SCrap Data = ",data)
         axios.post('http://127.0.0.1:5000/item', data, {
             headers:
                 { 'Authorization': `Bearer ${t.token}` }
             }).then(response => {
-                console.log("Response = ", response.data);
-                alert(" Item Added Successfully " + data.item_name)
+                alert(data.item_name + " Added Successfully ")
+                console.log("REponse = ",response.data)
+                setItems(
+                    {
+                        ...items,
+                        Items: [
+                            response.data['Item'],
+                            ...items['Items']
+                        ]
+                    })
+                console.log("REponse of items= ", items)
+                setOpen(false);
             })
             .catch(error => {
-                console.log("Error ", error.response);
+                console.log("Error ", error);
+                setOpen(false)
             });
-       // }
-
     }
+    //console.log(items)
     return (
         <div>
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
@@ -100,11 +104,11 @@ export default function AddVendor() {
                                     onChange={Inputevent}
                                     fullWidth
                                 >
-                                    <MenuItem value={1}>Plastic</MenuItem>
-                                    <MenuItem value={2}>Paper</MenuItem>
-                                    <MenuItem value="Metal">Metal</MenuItem>
-                                    <MenuItem value="E-Waste">E-Waste</MenuItem>
-                                    <MenuItem value="Other">Other</MenuItem>
+                                    <MenuItem value={1}>Paper</MenuItem>
+                                    <MenuItem value={2}>Plastic</MenuItem>
+                                    <MenuItem value={3}>Metal</MenuItem>
+                                    <MenuItem value={4}>E-Waste</MenuItem>
+                                    <MenuItem value={5}>Other</MenuItem>
                                 </Select>
                             </FormControl>
                             <CustomInput
@@ -116,13 +120,13 @@ export default function AddVendor() {
                                 onChange={Inputevent}
                                 formControlProps={{
                                     fullWidth: true,
+                                    
                                 }}
                                 type="text"
                                 inputProps={{
                                     type: "text"
                                 }}
                             />
-                            {/* {userErr ? <span style={{ "color": "red" }}>username require Valid data</span> : <span></span>} */}
                             <CustomInput
                                 required
                                 labelText="Item Price"
@@ -131,12 +135,26 @@ export default function AddVendor() {
                                 value={data.item_price}
                                 onChange={Inputevent}
                                 formControlProps={{
-                                    fullWidth: true
+                                    fullWidth: false
                                 }}
                                 inputProps={{
                                     type: "text"
                                 }}
                             />
+                            <FormControl style={{ width: '25ch', marginTop: '27px' }}>
+                                <InputLabel id="demo-simple-select-autowidth-label">Select Measure</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-autowidth-label"
+                                    //id="demo-simple-select-autowidth"
+                                    value={data.measure}
+                                    name="measure"
+                                    onChange={Inputevent}
+                                    fullWidth  
+                                >
+                                    <MenuItem value="Kg">Kg</MenuItem>
+                                    <MenuItem value="Piece">Piece</MenuItem>
+                                </Select>
+                            </FormControl>
                             {/* {pwdErr ? <span style={{ "color": "red" }}>Password require Valid data</span> : ""} */}
                         </CardBody>
                         <CardFooter className={classes.cardFooter}>
@@ -154,8 +172,8 @@ export default function AddVendor() {
                         Subscribe
                     </Button> */}
                 </DialogActions>
-            </Dialog>
-            <ScrapList />
+            </Dialog> 
+            <ScrapList setItems={setItems} items={ items}/> 
         </div>
     );
 }

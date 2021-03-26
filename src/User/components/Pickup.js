@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useHistory } from "react-router-dom";
 // @material-ui/core components
 import InputAdornment from "@material-ui/core/InputAdornment";
 // @material-ui/icons
 import People from "@material-ui/icons/People";
 // core components
+import 'date-fns';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -24,6 +26,11 @@ import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
+import Grid from "@material-ui/core/Grid";
+import DateFnsUtils from "@date-io/date-fns";
+import axios from "axios";
+import {ItemPrice} from '../../App';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 
 //import styles from "../assets/jss/material-kit-react/views/loginPage.js";
 
@@ -32,11 +39,6 @@ import { Phone } from "@material-ui/icons";
 
 //const useStyles = makeStyles(styles);
 const useStyles = makeStyles((theme) => ({
-    // formControl: {
-    //     margin: theme.spacing(1),
-    //     minWidth: 120,
-    //     maxWidth: 300,
-    // },
     chips: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -61,29 +63,48 @@ const MenuProps = {
     },
 };
 
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
-
-function getStyles(name, personName, theme) {
+const today = new Date()
+const tomorrow = new Date(today)
+tomorrow.setDate(tomorrow.getDate() + 1)
+   
+function getStyles(name, itemName, theme) {
     return {
         fontWeight:
-            personName.indexOf(name) === -1
+            itemName.indexOf(name) === -1
                 ? theme.typography.fontWeightRegular
                 : theme.typography.fontWeightMedium,
     };
 }
 
-export default function LoginPage(props) {
+export default function Pickup(props) {
+    const history = useHistory()
+    
+    const [Names, setName] = useState([]);
+    useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = async () => {
+        const response = await axios.get("http://127.0.0.1:5000/itemlist")
+        const items = response.data.Items;
+        console.log('test', items)
+        let newArr = []
+        items.forEach((res) => {
+            if (newArr.length > 0) {
+                newArr = [...newArr, { id: res.Item_id, name: res.Item_name }]
+            } else {
+                newArr = [{ id: res.Item_id, name: res.Item_name }]
+            }
+        })
+        setName(names => [
+            ...names,
+            ...newArr
+        ])
+    }
+    
+    const names = Names //store in names 
+    //console.log(names)
+    //console.log(names)
 
     const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
     setTimeout(function () {
@@ -92,36 +113,97 @@ export default function LoginPage(props) {
     const classes = useStyles();
     const { ...rest } = props;
 
-    ////////////////////////////////
+    const userdata = JSON.parse(localStorage.getItem('user_data'))
+    //console.log(userdata.username)
+    const [data, setData] = React.useState({
+        username: userdata?.username,
+        phone: userdata?.phone,
+        address: '',
+        items: '',
+        pickup_date: '',
+        pickup_slot: ''
+    });
+   
+    const [addressErr, setAddressErr] = useState(false)
+    const [slotErr, setSlotErr] = useState(false)
+    const [itemErr, setItemErr] = useState(false)
+
+    const Inputevent = (event) => {
+        const { name, value } = event.target;
+        if (data['address'].length < 5) { setAddressErr(true) } else { setAddressErr(false) }
+        setData((preVal) => {
+            return {
+                ...preVal,
+                [name]: value,
+            }
+        });
+    }
+    const t = JSON.parse(localStorage.getItem("token"));
+
+    const formSubmit = (event) => {
+        event.preventDefault();
+        if (!addressErr) {
+            axios.post('http://127.0.0.1:5000/order', data, {
+                headers:
+                    { 'Authorization': `Bearer ${t.token}` }
+            }).then(response => {
+                console.log("Response = ", response.data);
+                alert("Successfully Order")
+                history.push('/')
+            }).catch(error => {
+                alert("Invalid Order Data")
+                console.log("Error ", error);
+            });
+        }
+    }
+  
     const theme = useTheme();
-    const [personName, setPersonName] = React.useState([]);
+    const [itemName, setItemName] = useState([]); 
 
     const handleChange = (event) => {
-        setPersonName(event.target.value);
+        console.log('event', event)
+        let finalArr = []
+            names.forEach((name) => {
+            return event.target.value.forEach((data) => {
+                if (name.name === data) {
+                    if (finalArr.length > 0) finalArr = [...finalArr, name.id]
+                   else finalArr=[name.id]
+                }
+            })
+        })
+        setItemName(event.target.value)
+        console.log("ItemNAme = ", JSON.stringify(finalArr))
+        console.log(typeof (JSON.stringify(finalArr)))
+        setData((preVal) => {
+            return {
+                ...preVal,
+                items: JSON.stringify(finalArr) //item setData ma set kri
+            }
+        })
     };
 
-    // const handleChangeMultiple = (event) => {
-    //     const { options } = event.target;
-    //     const value = [];
-    //     for (let i = 0, l = options.length; i < l; i += 1) {
-    //         if (options[i].selected) {
-    //             value.push(options[i].value);
-    //         }
-    //     }
-    //     setPersonName(value);
-    // };
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+        setData((preVal) => {
+            return {
+                ...preVal,
+                pickup_date: date
+            }
+        })
+    };
 
-    //////////////////////////////////////
-
+    const [selectedDate, setSelectedDate] = useState(
+        new Date(tomorrow)
+    );
 
     return (
-        <div> <a href="/">
+        <div>
             <Header
                 absolute
-                brand="Scrape Mart"
+                brand="Scrap Mart"
                 rightLinks={<HeaderLinks />}
                 {...rest}
-            /> </a>
+            />
             <div
                 className={classes.pageHeader}
                 style={{
@@ -135,7 +217,7 @@ export default function LoginPage(props) {
                     <GridContainer justify="center">
                         <GridItem xs={12} sm={12} md={4}>
                             <Card className={classes[cardAnimaton]}>
-                                <form className={classes.form}>
+                                <form className={classes.form} onSubmit={formSubmit}>
                                     <CardHeader color="primary" className={classes.cardHeader}>
                                         <h4>Send Your PickUp Request</h4>
                                     </CardHeader>
@@ -144,22 +226,8 @@ export default function LoginPage(props) {
                                         <CustomInput
                                             labelText="Username..."
                                             id="username"
-                                            formControlProps={{
-                                                fullWidth: true
-                                            }}
-                                            inputProps={{
-                                                type: "text",
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <People className={classes.inputIconsColor} />
-                                                    </InputAdornment>
-                                                )
-                                            }}
-                                        />
-                                        <CustomInput
-                                            labelText="Address..."
-                                            id="address"
-                                            rows={4}
+                                            name="usename"
+                                            value={data.username}
                                             formControlProps={{
                                                 fullWidth: true
                                             }}
@@ -175,6 +243,9 @@ export default function LoginPage(props) {
                                         <CustomInput
                                             labelText="Mobile Number..."
                                             id="phone"
+                                            name="phone"
+                                            value={data.phone}
+                                            //onChange={Inputevent}
                                             formControlProps={{
                                                 fullWidth: true
                                             }}
@@ -187,14 +258,38 @@ export default function LoginPage(props) {
                                                 )
                                             }}
                                         />
+                                        <CustomInput
+                                            required
+                                            labelText="Address..."
+                                            id="address"
+                                            name="address"
+                                            value={data.address}
+                                            onChange={Inputevent}
+                                            rows={4}
+                                            formControlProps={{
+                                                fullWidth: true
+                                            }}
+                                            inputProps={{
+                                                type: "text",
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <People className={classes.inputIconsColor} />
+                                                    </InputAdornment>
+                                                )
+                                            }}
+                                        />
+                                        {addressErr ? <span style={{ "color": "red" }}>Add Valid Address data </span> : <span></span>}
 
-                                        <FormControl fullWidth>
+
+                                         <FormControl fullWidth>
                                             <InputLabel id="demo-mutiple-chip-label">Select Scrap Item</InputLabel>
                                             <Select
+                                                required
                                                 labelId="demo-mutiple-chip-label"
                                                 id="demo-mutiple-chip"
                                                 multiple
-                                                value={personName}
+                                                name="items"
+                                                value={itemName}
                                                 onChange={handleChange}
                                                 input={<Input id="select-multiple-chip" />}
                                                 renderValue={(selected) => (
@@ -206,46 +301,55 @@ export default function LoginPage(props) {
                                                 )}
                                                 MenuProps={MenuProps}
                                             >
-                                                {names.map((name) => (
-                                                    <MenuItem key={name} value={name} style={getStyles(name, personName, theme)}>
-                                                        {name}
+                                                {Names.map((name, index) => (
+                                                    <MenuItem key={index} value={name.name} style={getStyles(name, itemName, theme)}>
+                                                        {name.name}
                                                     </MenuItem>
                                                 ))}
                                             </Select>
-                                        </FormControl><br /><br />
-
+                                            
+                                        </FormControl><br /><br /> 
+                                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                            <Grid container justify="space-around">
+                                                <KeyboardDatePicker
+                                                    disableToolbar
+                                                    fullWidth
+                                                    name="pickup_date"
+                                                    minDate={tomorrow}
+                                                    variant="inline"
+                                                    format="MM/dd/yyyy"
+                                                    margin="normal"
+                                                    id="date-picker-inline"
+                                                    label="Select pickup Date"
+                                                    value={selectedDate}
+                                                    onChange={handleDateChange}
+                                                    KeyboardButtonProps={{
+                                                        "aria-label": "change date"
+                                                    }}
+                                                />
+                                            </Grid>
+                                        </MuiPickersUtilsProvider>
+                                        <br />
                                         <FormControl fullWidth>
-                                            {/* <label>Approx weight of Garbage</label> */}
-                                            <InputLabel>Approx weight of Garbage</InputLabel>
-                                            <NativeSelect
-                                                id="weight"
-                                                inputProps={{
-                                                    type: "weight"
-                                                }}>
-                                                
-                                                <option value={10}>10kg to 20kg</option>
-                                                <option value={20}>20kg to 50kg</option>
-                                                <option value={50}>50kg to 100kg</option>
-                                                <option value={100}>100kg Up</option>
-                                            </NativeSelect>
-                                        </FormControl>
-                                        <br /><br />
-                                        <FormControl  fullWidth>
                                             <InputLabel>Pickup Slot</InputLabel>
                                             <NativeSelect
+                                                required
                                                 id="pickup"
+                                                name="pickup_slot"
+                                                onChange={Inputevent}
                                                 inputProps={{
                                                     type: "pickup"
                                                 }}>
-                                              
-                                                <option value={10}>10AM to 1PM</option>
-                                                <option value={4}>4PM to 7PM</option>
+                                                <option>---Select Slot---</option>
+                                                <option value="10AM to 1PM">10AM to 1PM</option>
+                                                <option value="4PM to 7PM">4PM to 7PM</option>
                                             </NativeSelect>
                                         </FormControl>
+                                        <br />
                                     </CardBody>
                                     <CardFooter className={classes.cardFooter}>
-                                        <Button simple color="success" size="lg">
-                                                Send Request
+                                        <Button type="submit" simple color="success" size="lg">
+                                            Send Request
                                         </Button>
                                     </CardFooter>
                                 </form>

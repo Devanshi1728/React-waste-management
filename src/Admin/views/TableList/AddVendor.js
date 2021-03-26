@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -18,65 +18,130 @@ import CustomInput from "Admin/components/CustomInput/CustomInput.js";
 import styles from "../../../User/assets/jss/material-kit-react/views/loginPage";
 import axios from "axios";
 //import image from "../../assets/img/kbg.png";
-import { HomeOutlined, Phone } from "@material-ui/icons";
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import {  Phone } from "@material-ui/icons";
 import VendorList from "Admin/views/TableList/VendorList";
 
 const useStyles = makeStyles(styles);
 
 export default function AddVendor() {
+
+    //const [value, setValue] = React.useState([top100Films[13]]);
+    const handleKeyDown = event => {
+        switch (event.key) {
+            case ",":
+            case " ": {
+                event.preventDefault();
+                event.stopPropagation();
+                if (event.target.value.length > 0) {
+                    setData((preVal) => {
+                        return {
+                            ...preVal,
+                            [city]: event.target.value
+                        }
+                    });
+                    //setData([...preVal, [city]:event.target.value]);
+                }
+                break;
+            }
+            default:
+        }
+    };
+
+    // a method lidhi che..bcz ana vgr value clear thy jatuut..bt ek mistake che..ama use state a alreaddy city array didheli che..an aapde null rkhyu che
+
+    const city = [
+        'Surat',
+        'Ahmedabad',
+        'Rajkot',
+        'Junagadh',
+        'Nadiad',
+        "Baroda",
+        'Anand',
+        'Bhavnagar',
+        'Navsari',
+        'Keshod',
+        'Veraval',
+        'Gandhinagar',
+        'Jamnagar',
+        'Vasi',
+        'Botad',
+    ];
+
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
-
-    //const { ...rest } = props;
-
+    const [inputValue, setInputValue] = React.useState('');
     const handleClickOpen = () => {
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+        setGc(prev=> prev +1)
     };
+    //may i call u to explain this
 
     const [data, setData] = React.useState({
         username: '',
         password: '',
-        city: '',
+        city: city[0],
         phone: '',
         role: 'Vendor'
     });
     const [userErr, setUserErr] = useState(false)
     const [pwdErr, setPwdErr] = useState(false)
     const [cityErr, setCityErr] = useState(false)
-    const [phoneErr, setPhoneErr] = useState(false)
-
+   // const [phoneErr, setPhoneErr] = useState(false)
 
     const Inputevent = (event) => {
         const { name, value } = event.target;
-        if (data[name].length < 3) { setUserErr(true) } else { setUserErr(false) }
-        if (data[name].length < 3) { setPwdErr(true) } else { setPwdErr(false)}
-        if (data[name].length < 3) { setCityErr(true) } else { setCityErr(false)}
-        if (data[name].length === 9) { setPhoneErr(false) } else { setPhoneErr(true) }
+        //console.log(event.target)
+        if (data['username'].length < 3) { setUserErr(true) } else { setUserErr(false) }
+        if (data['password'].length < 3) { setPwdErr(true) } else { setPwdErr(false)}
+        if (data['city'].length === 0) { setCityErr(true) } else { setCityErr(false)}
+       //if (data[name].length < 9) { setPhoneErr(true) } else { setPhoneErr(false) }
         setData((preVal) => {
             return {
                 ...preVal,
                 [name]: value
             }
         });
-        console.log("phone length = ", data.phone.length)
+    }
+    const [gc, setGc] = useState(null)
+    useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = async () => {
+        const response = await axios.get("http://127.0.0.1:5000/userlist")
+        setGc(response.data)
     }
     const formSubmit = (event) => {
+        console.log("called ")
         event.preventDefault();
-        if (!phoneErr && !cityErr && !pwdErr && !userErr) {
+        console.log(data)   
+        if (!cityErr && !pwdErr && !userErr) {
             axios.post('http://127.0.0.1:5000/auth/registration', data)
                 .then(response => {
-                    console.log("Response = ", response.data);
-                    alert(" Vendor added Successfully "+ data.username)
+                    console.log("Response of user = ", response.data['Users']);
+                    alert(data.username + " added Successfully ")
+                    setOpen(false);
+                    setGc({
+                        ...gc,
+                        Users: [
+                            response.data['Users'],
+                            ...gc['Users']
+                        ]
+                    })
+                    console.log("GC new = ", gc) // the prb is when to us thus props
+                    
                 })
                 .catch(error => {
                     console.log("Error ", error.response);
+                    setOpen(false);
                 });
-        }
-    
+        }   
     }
     return (
         <div>
@@ -136,7 +201,7 @@ export default function AddVendor() {
                                 }}
                             />
                             {pwdErr ? <span style={{ "color": "red" }}>Password require Valid data</span> : ""}
-                            <CustomInput
+                             <CustomInput
                                 required
                                 labelText="Mobile Number..."
                                 id="phone"
@@ -154,30 +219,26 @@ export default function AddVendor() {
                                         </InputAdornment>
                                     )
                                 }}
-
                             />
-                            {phoneErr ? <span style={{ "color": "red" }}>Field require Valid data</span> : ""}
-                            <CustomInput
-                                required
-                                labelText="City"
-                                id="city"
-                                name="city"
+                            
+                            <Autocomplete
                                 value={data.city}
-                                onChange={Inputevent}
-                                formControlProps={{
-                                    fullWidth: true
+                                onChange={(event, newValue) => {
+                                    setData({ ...data, city: newValue });
                                 }}
-                                inputProps={{
-                                    type: "city",
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <HomeOutlined className={classes.inputIconsColor} />
-                                        </InputAdornment>
-                                    )
+                                inputValue={inputValue}
+                                onInputChange={(event, newInputValue) => {
+                                    setInputValue(newInputValue);
                                 }}
+                                
+                                options={city}
+                               
+                                renderInput={(params) => <TextField {...params} label="Controllable" variant="outlined" />}
                             />
-                            {cityErr ? <span style={{ "color": "red" }}>Field require Valid data</span> : ""}
+
+            {/* {cityErr ? <span style={{ "color": "red" }}>Field require Valid data</span> : ""} */}
                             <br /><br />
+                            
                         </CardBody>
                         <CardFooter className={classes.cardFooter}>
                             <Button type="submit" simple color="success" size="lg">
@@ -195,7 +256,8 @@ export default function AddVendor() {
                     </Button> */}
                 </DialogActions>
             </Dialog>
-           <VendorList />
+            <br />
+            <VendorList gc={gc}/>
         </div>
     );
 }

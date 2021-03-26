@@ -5,10 +5,10 @@ import { useHistory } from "react-router-dom";
 function LogoutHandler() {
     const history = useHistory()
     useEffect(() => {
-        localStorage.removeItem('login')
+        localStorage.removeItem('token')
         localStorage.clear();
         console.log("logged out")
-        history.push('/login-page')
+        history.push('/')
     }, []);
     return null;
 }

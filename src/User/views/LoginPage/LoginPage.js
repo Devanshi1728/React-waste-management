@@ -7,6 +7,7 @@ import Icon from "@material-ui/core/Icon";
 import People from "@material-ui/icons/People";
 // core components
 import { useHistory } from "react-router-dom";
+
 import Header from "User/components/Header/Header.js";
 import HeaderLinks from "User/components/Header/HeaderLinks.js";
 import Footer from "User/components/Footer/Footer.js";
@@ -50,8 +51,8 @@ export default function LoginPage(props) {
   
   const Inputevent = (event) => {
     const { name, value } = event.target;
-    if (data[name].length < 2) { setUserErr(true) } else { setUserErr(false) }
-    if (data[name].length < 2) { setPwdErr(true) } else { setPwdErr(false) }
+    if (data['username'].length < 2) { setUserErr(true) } else { setUserErr(false) }
+    if (data['password'].length < 2) { setPwdErr(true) } else { setPwdErr(false) }
     setData((preVal) => {
       return {
         ...preVal,
@@ -66,13 +67,19 @@ export default function LoginPage(props) {
     // if (!pwdErr && !userErr) {
     axios.post('http://127.0.0.1:5000/auth/login', data)
         .then(response => {
-          //console.log(response);
+          console.log("login response = ",response);
           setData((preVal) => {
             return {
               ...preVal,
               login: true
             }
           });
+          localStorage.setItem('user_data', JSON.stringify({
+            username: response.data.username,
+            phone: response.data.phone,
+            city: response.data.city,
+            id:response.data.id
+          }));
           localStorage.setItem('login', JSON.stringify({
             login: true,
           }));
@@ -82,12 +89,11 @@ export default function LoginPage(props) {
           localStorage.setItem('token', JSON.stringify({
             token: response.data.access_token,
           }));
-          if (response.data.role === 'Admin') {
+          if (response.data.role === 'Admin') 
             history.push("/admin")
-          }
-            
-          // else if (response.data.role === 'Vendor')
-          //   history.push("/vendor/dashbord")
+          else if(response.data.role === 'Vendor')
+            //history.push("/admin/dashboard_vendor")
+            history.push("/admin/order-details")
           else
             history.push("/")
         })
@@ -101,14 +107,13 @@ export default function LoginPage(props) {
   return (
     <div>
       <div>
-      {/* <a href="/" > */}
       <Header
         absolute
+        href="/"
         brand="Scrap Mart"
         rightLinks={<HeaderLinks />}
         {...rest}
         /> 
-      {/* </a> */}
       <div
         className={classes.pageHeader}
         style={{
@@ -184,8 +189,3 @@ export default function LoginPage(props) {
   </div>
   );
 }
-
-// 6 m0nths 3400 40mbps
-// router frame
-
-// 3moths 1990

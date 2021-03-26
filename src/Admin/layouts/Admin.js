@@ -38,6 +38,7 @@ const switchRoutes = (
       return null;
     })}
     <Redirect from="/admin" to="/admin/dashboard" />
+
   </Switch>
 );
 

@@ -4,10 +4,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Button from "@material-ui/core/Button/Button"
-// core components
+// core components.
+import MUIDataTable from "mui-datatables";
 import GridItem from "Admin/components/Grid/GridItem.js";
 import GridContainer from "Admin/components/Grid/GridContainer.js";
-import Table from "Admin/components/Table/Table.js";
 import Card from "Admin/components/Card/Card.js";
 import CardHeader from "Admin/components/Card/CardHeader.js";
 import CardBody from "Admin/components/Card/CardBody.js";
@@ -46,36 +46,44 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-export default function VendorList() {
+export default function VendorList(props) {
+    const [data, setData] = useState([]);  
+
+    const options = {
+        filter: true,
+        filterType: "dropdown",
+        responsive: "standard"
+    };
+    
     const classes = useStyles();
    
     const [open, setOpen] = useState(false);
-    const [id, setId] = useState(0);
-    const [name, setName] = useState("")
-    const [city, setCity] = useState("")
-    const [phone, setPhone] = useState(null)
-
-
-    const handleClickOpen = (id, name, city, phone) => {
-        setId(id)
-        setName(name)
-        setCity(city)
-        setPhone(phone)
+    const [vendorRecord, setVendorRecord] = useState(null);
+    const { gc } = props
+    const handleClickOpen = (row) => {
+        setVendorRecord(row)
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
     };
-
+    useEffect(() => {
+        console.log('Test for this method call')
+        getData()
+    }, [gc]);
+    
     const [vendors, setVendors] = useState(null);
     useEffect(() => {
-        getData()
+        getData()        
     }, [])
+
+    useEffect(() => {
+        setData(renderBody())
+    }, [vendors, vendors?.Vendors]);
 
     const getData = async () => {
         const response = await axios.get("http://127.0.0.1:5000/vendorlist")
-        console.log(response.data)
         setVendors(response.data)
     }
     const renderHeader = () => {
@@ -87,26 +95,29 @@ export default function VendorList() {
     const t = JSON.parse(localStorage.getItem("token"));
 
     const removeData = (id) => {
+        console.log('delete id', id)
         axios.delete(`http://127.0.0.1:5000/delete`,
             {
-                headers: { 'Authorization': "Bearer " | `${t.token}` },
+                headers: { 'Authorization': `Bearer ${t.token}` },
                 data: { username: id }
             }).then(res => {
-                const del = vendors.Users.filter(Users => id !== Users.UserId)
-                console.log("Response del= ", del)
-                setVendors(del)
-                console.log("vendors ", vendors)
-                alert("Vendor Deleted Successfully")
+                console.log('vendor user', vendors  )
+                //const del = vendors.Users?.filter(Users => id !== Users.UserId)
+                //console.log("Response del= ", del)
+                window.alert("Vendor Deleted Successfully")
+                getData()
+                //setVendors(del)
             }).catch(error => {
-                console.log("id", id)
+                //console.log("id", id)
                 console.log("Error : ", error)
             })
     }
 
     const renderBody = (props) => {
         //console.log(vendors)
-        return vendors && vendors.Vendors ? vendors.Vendors.map(({ UserId, Username, Role, City, Phone }) => {
-            return [Username, Role, City, Phone,
+        return vendors && vendors.Vendors ? vendors.Vendors?.map((row) => {
+            const { Username, Role, City, Phone } = row;
+            return [ Username, Role, City, Phone,
                 <Button
                     variant="contained"
                     color="secondary"
@@ -121,31 +132,33 @@ export default function VendorList() {
                     size="small"
                     className={classes.button}
                     startIcon={<EditIcon />}
-                    onClick={() => handleClickOpen(UserId, Username, City, Phone)}
+                    onClick={() => handleClickOpen(row)}
                 >Edit</Button>
             ]
         }) : []
     }
+
     return (
         <GridContainer>
-            {
-            open ?
-                    <EditVendor name={name} id={id} city={city} phone={phone} open={open} setOpen={setOpen} vendors={vendors.Vendors} setVendors={setVendors} /> : null}
+            {open ?
+                < EditVendor open={open} setOpen={setOpen} vendors={vendors.Vendors} setVendors={setVendors} vendorRecord={vendorRecord} /> : null}
             <GridItem xs={12} sm={12} md={12}>
                 <Card>
                     <CardHeader color="primary">
-                        <h4 className={classes.cardTitleWhite}>Vendor Details</h4>
+                        <h4 className={classes.cardTitleWhite}>Customer Details</h4>
+                        {/* <p className={classes.cardCategoryWhite}>
+                            Here is a subtitle for this table
+                        </p> */}
                     </CardHeader>
                     <CardBody>
-                        <Table
-                            tableHeaderColor="primary"
-                            tableHead={renderHeader()}
-                            tableData={renderBody()}
-                        />
+                    <MUIDataTable
+                        title={"ScrapMart Vendor list"}
+                        data={data}
+                        columns={renderHeader()}
+                        options={options}  />
                     </CardBody>
                 </Card>
             </GridItem>
-
-        </GridContainer>
+            </GridContainer>
     );
 }

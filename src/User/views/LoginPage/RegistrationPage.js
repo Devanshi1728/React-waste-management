@@ -17,11 +17,14 @@ import CardBody from "User/components/Card/CardBody.js";
 import CardHeader from "User/components/Card/CardHeader.js";
 import CardFooter from "User/components/Card/CardFooter.js";
 import CustomInput from "User/components/CustomInput/CustomInput.js";
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import Pickup from 'User/components/Pickup';
 
 import styles from "../../assets/jss/material-kit-react/views/loginPage.js";
 
 import image from "../../assets/img/kbg.png";
-import { HomeOutlined, Phone } from "@material-ui/icons";
+import { Phone } from "@material-ui/icons";
 import axios from "../../../axios";
 import { useHistory } from "react-router";
 
@@ -29,11 +32,21 @@ const useStyles = makeStyles(styles);
 
 export default function RegistrationPage(props) {
 
-    useEffect(()=> {
+    const [addcity,setCity] = useState(null)
+    
+    useEffect(() => {
         if (localStorage.getItem("token")) {
             history.push('/request')
         }
+        getData()
     }, [])
+    //getting city n set in setCity
+    const getData = async () => {
+        const response = await axios.get("http://127.0.0.1:5000/vendorlist")
+        //console.log("City = ", response.data.Vendors.map(e => e.City))
+        const city = response.data.Vendors.map(e => e.City)
+        setCity(city)
+    }
 
     var history = useHistory();
     const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
@@ -41,11 +54,38 @@ export default function RegistrationPage(props) {
         setCardAnimation("");
     }, 700);
     const classes = useStyles();
-
+    const [inputValue, setInputValue] = React.useState('');
     const { ...rest } = props;
 
-    //// ========================== logic   ============================== /////
+    const handleKeyDown = event => {
+        switch (event.key) {
+            case ",":
+            case " ": {
+                event.preventDefault();
+                event.stopPropagation();
+                if (event.target.value.length > 0) {
+                    setData((preVal) => {
+                        return {
+                            ...preVal,
+                            [city]: event.target.value
+                        }
+                    });
+                    //setData([...preVal, [city]:event.target.value]);
+                }
+                break;
+            }
+            default:
+        }
+    };
 
+    const city = addcity ? addcity : []
+ 
+    //console.log("city add = ",city)
+    
+    //console.log(addcity)
+
+    //// ========================== logic   ============================== /////
+    //main setData of form
     const [data, setData] = React.useState({
         username: '',
         password: '',
@@ -55,15 +95,15 @@ export default function RegistrationPage(props) {
     const [userErr, setUserErr] = useState(false)
     const [pwdErr, setPwdErr] = useState(false)
     const [cityErr, setCityErr] = useState(false)
-    const [phoneErr, setPhoneErr] = useState(false)
+    //const [phoneErr, setPhoneErr] = useState(false)
     
-
+        //onchange event
     const Inputevent = (event) => {
         const { name, value } = event.target;
-        if (data[name].length < 3) { setUserErr(true) } else { setUserErr(false) }
-        if (data[name].length < 3) { setPwdErr(true) } else { setPwdErr(false) }
-        if (data[name].length < 3) { setCityErr(true) } else { setCityErr(false) }
-        if (data[name].length === 9) { setPhoneErr(false) } else { setPhoneErr(true) }
+        if (data['username'].length < 3) { setUserErr(true) } else { setUserErr(false) }
+        if (data['password'].length < 3) { setPwdErr(true) } else { setPwdErr(false) }
+        if (data['city'].length < 3) { setCityErr(true) } else { setCityErr(false) }
+       
         setData((preVal) => {
             return {
                 ...preVal,
@@ -72,12 +112,12 @@ export default function RegistrationPage(props) {
         });
     }
     const formSubmit = (event) => {
-        console.log("called")
+        //console.log("called")
         event.preventDefault();
         //if (!phoneErr && !cityErr && !pwdErr && !userErr) {
         axios.post('http://127.0.0.1:5000/auth/registration', data)
                 .then(response => {
-                    console.log("Response = ", response.data);
+                    //console.log("Response = ", response.data);
                     // alert("Successfully Signup")
                     history.push('/login-page')
                 })
@@ -115,6 +155,7 @@ export default function RegistrationPage(props) {
                                     {/* <p className={classes.divider}>Or Be Classical</p> */}
                                     <CardBody>
                                         <CustomInput
+                                            required
                                             labelText="Username..."
                                             // id="username"
                                             name="username"
@@ -136,6 +177,7 @@ export default function RegistrationPage(props) {
                                         />
                                         {userErr ? <span style={{ "color": "red" }}>username require Valid data</span> : <span></span>}
                                         <CustomInput
+                                            required
                                             labelText="Password"
                                             id="password"
                                             name="password"
@@ -158,6 +200,7 @@ export default function RegistrationPage(props) {
                                         />
                                         {pwdErr ? <span style={{ "color": "red" }}>Password require Valid data</span> : <span></span>}
                                         <CustomInput
+                                            required
                                             labelText="Mobile Number..."
                                             id="phone"
                                             name="phone"
@@ -175,24 +218,19 @@ export default function RegistrationPage(props) {
                                                 )
                                             }}
                                         />
-                                        {phoneErr ? <span style={{ "color": "red" }}>Field require Valid data</span> : <span></span>}
-                                        <CustomInput
-                                            labelText="City"
-                                            id="city"
-                                            name="city"
+                                      {/* {phoneErr ? <span style={{ "color": "red" }}>Field require Valid data</span> : <span></span>} */}
+                                        {/* <div>{ JSON.stringify(city)}</div> */}
+                                        <Autocomplete
                                             value={data.city}
-                                            onChange={Inputevent}
-                                            formControlProps={{
-                                                fullWidth: true
+                                            onChange={(event, newValue) => {
+                                                setData({ ...data, city: newValue });
                                             }}
-                                            inputProps={{
-                                                type: "city",
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <HomeOutlined className={classes.inputIconsColor} />
-                                                    </InputAdornment>
-                                                )
+                                            inputValue={inputValue}
+                                            onInputChange={(event, newInputValue) => {
+                                                setInputValue(newInputValue);
                                             }}
+                                            options={city}
+                                            renderInput={(params) => <TextField {...params} label="City" variant="outlined" />}
                                         />
                                         {cityErr ? <span style={{ "color": "red" }}>Field require Valid data</span> : <span></span>}
                                         <br /><br />

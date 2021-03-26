@@ -18,12 +18,15 @@ import axios from "axios";
 const useStyles = makeStyles(styles);
 
 const EditVendor = (props) => {
-    const { name, id, city, phone, vendors } = props
+    console.log(props);
+    const { Username: name, UserId: id, City: city, Phone: phone } = props?.vendorRecord
+    const { vendors } = props;
+    console.log(vendors)
     const [data, setData] = useState({
         username: name,
         id: id,
         city: city,
-        phone:phone
+        phone: phone
     });
     //var history = useHistory();
     const classes = useStyles();
@@ -32,9 +35,7 @@ const EditVendor = (props) => {
     console.log(data)
     const Inputevent = (event) => {
         const { name, value } = event.target;
-        // if (data[name].length < 3) { setUserErr(true) } else { setUserErr(false) }
-        // if (data[name].length < 3) { setPwdErr(true) } else { setPwdErr(false) }
-
+       
         setData((preVal) => {
             return {
                 ...preVal,
@@ -45,25 +46,29 @@ const EditVendor = (props) => {
 
     const formSubmit = (event) => {
         event.preventDefault();
-        console.log("Vendor Data = ", data)
+        //console.log("Vendor Data = ", data)
 
         axios.put('http://127.0.0.1:5000/user/' + data.id,
             { username: data.username, city: data.city, phone: data.phone },
             {
-            headers:
-                { 'Authorization': `Bearer ${t.token}` }
+                headers:
+                    { 'Authorization': `Bearer ${t.token}` }
             }).then(response => {
-            console.log(response)
-            alert(data.username + "  Updated Successfully ")
-            const index = vendors.findIndex((vendor) => vendor.UserId === data.id)
-            vendors[index].Username = data.username;
-            vendors[index].City = data.city;
-            vendors[index].Phone = data.phone
-            props.setVendors({ Vendors: vendors })
-            props.setOpen(false);
-        })
+                console.log(response)
+                alert(data.username + "  Updated Successfully ")
+                const index = vendors.findIndex((vendor) => vendor.UserId === data.id)
+
+                vendors[index].Username = data.username;
+                vendors[index].City = data.city;
+                vendors[index].Phone = data.phone
+               
+                props.setVendors({ Vendors: vendors })
+                props.setOpen(false);
+            })
             .catch(error => {
                 console.log("Error ", error);
+                alert(error.response)
+                props.setOpen(false);
             });
     }
     return (
@@ -137,7 +142,6 @@ const EditVendor = (props) => {
                     </Button>  */}
                 </DialogActions>
             </Dialog>
-            {/* <ScrapList /> */}
         </div>
     );
 }
